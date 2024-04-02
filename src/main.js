@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import { createRouter, createWebHistory } from 'vue-router'
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
+import VueAwesomePaginate from 'vue-awesome-paginate'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import App from './App.vue'
@@ -10,6 +11,7 @@ import MainPage from './components/pages/MainPage.vue'
 import MarkerPage from './components/pages/MarkerPage.vue'
 import MoviePage from './components/pages/MoviePage.vue'
 import '@mdi/font/css/materialdesignicons.css'
+import "vue-awesome-paginate/dist/style.css";
 
 const vuetify = createVuetify({
     components,
@@ -38,4 +40,5 @@ const router = createRouter({
     routes,
 })
 
-createApp(App).use(router).use(vuetify).use(pinia).mount('#app')
+const app = createApp(App)
+app.use(router).use(vuetify).use(pinia).use(VueAwesomePaginate).mount('#app')
