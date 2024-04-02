@@ -6,12 +6,11 @@ const MovieStore = useMovieStore()
 </script>
 
 <template>
-    <div class="d-flex align-center flex-column">
         <v-card
-            class="my-2 align-end"
             height="400px"
             max-width="200px"
-            hover>
+            hover
+            link>
             <v-img 
             height="300px"
             :src="poster"
@@ -24,7 +23,6 @@ const MovieStore = useMovieStore()
                 <p>{{ year + " года выпуска"}}</p>
             </v-card-subtitle>
         </v-card>
-    </div>
 </template>
 
 <style lang="scss" scoped></style>
