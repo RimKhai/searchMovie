@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import kinopoisk from '../../BD/kinopoisk-1.json'
 
 export const useMovieStore = defineStore ('MovieStore', {
+    sortParam: '',
+    
     state: () => ({
         movies: kinopoisk,
     }),
@@ -32,6 +34,10 @@ export const useMovieStore = defineStore ('MovieStore', {
             }
 
             return (Math.round(sum/count * 1000) / 1000)
+        },
+
+        totalPages(){
+            return Math.ceil(this.movies.docs.length/25)
         }
-    }
+    } 
 })
