@@ -6,6 +6,7 @@ export const useMovieStore = defineStore ('MovieStore', {
     
     state: () => ({
         movies: kinopoisk,
+        currentSorting: 'title'
     }),
     
     actions: {
