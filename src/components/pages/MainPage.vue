@@ -1,6 +1,6 @@
 <script setup>
 import { useMovieStore } from '../../stores/MovieStore.js'
-import { ref, computed } from 'vue'
+import { ref, computed} from 'vue'
 import MovieCard from '../ui/MovieCard.vue'
 import AppBar from '../ui/AppBar.vue'
 
@@ -8,11 +8,18 @@ const MovieStore = useMovieStore()
 
 const movies = ref(MovieStore.movies)
 
-const search = ref('')
-
 const currentPage = ref(1)
 
 const moviesPerPage = 25
+
+const sortingParametrs = [
+    {title: "По названию", parametr: "title"},
+    {title: "По году выхода", parametr: "year"},
+    {title: "По средней оценке", parametr: "score"},
+    {title: "По хронометражу", parametr: "timing"},
+]
+
+const currentSorting = ref(MovieStore.currentSorting)
 
 const sorting = (sortParam, movies) => {
     switch (sortParam) {
@@ -47,27 +54,19 @@ const sorting = (sortParam, movies) => {
     }
 }
 
-var movieListPerPage = ref();
+const movieListPerPage = ref([])
 
 const showMovies = computed(() => {
+    let start = (currentPage.value - 1) * moviesPerPage
+    let end = start + moviesPerPage
     let m = movies.value.docs
-    let searchVal = search.value
-    if (searchVal != '' && searchVal != null) {
-        m = m.filter((movie) => {
-            return (movie.name.toLowerCase().indexOf(searchVal.toLowerCase()) !== -1)
-        })
-        movieListPerPage = sorting('year', m)
-        return movieListPerPage
-    }
-    m = sorting('year', m)
-    return m
+    m = sorting(MovieStore.currentSorting, m)
+    /* movieListPerPage = m.slice(start, end) */
+    return m.slice(start, end)
 })
 
 const changePage = (page) => {
-    console.log(page)
-    let start = (page - 1) * moviesPerPage
-    let end = start + moviesPerPage
-    movieListPerPage = showMovies.value.slice(start, end)
+    currentPage.value = page
     window.scrollTo(0, 0)
 }
 
@@ -76,27 +75,36 @@ changePage(1)
 
 <template>
     <v-app>
-        <AppBar />
+        <AppBar :sortingParametrs="sortingParametrs" :currentSorting="currentSorting"/>
         <v-responsive
             class="mx-auto mt-8"
             width="500">
-            <v-text-field
+            <v-col cols="12">
+            <v-autocomplete
                 label="Поиск"
                 variant="outlined"
+                auto-select-first
+                :items="MovieStore.movies.docs"
+                item-title="name"
+                no-data-text="Ничего не найдено("
+                item-props
                 clearable
                 prepend-inner-icon="mdi-magnify"
                 single-line
-                v-model="search">
-            </v-text-field>
-            <div class="text-center">
+                menu-icon=""
+                rounded>
+            </v-autocomplete>
+            </v-col>
+            <!-- <div class="text-center">
                 <v-btn
+                rounded
                 class="mx-auto mb-3"
                 variant="outlined"
                 width="400"
-                @click="changePage(currentPage)">
+                >
                     Поиск
                 </v-btn>
-            </div>
+            </div> -->
         </v-responsive>
         <v-container>
             <v-row
@@ -104,7 +112,7 @@ changePage(1)
                 align="center">
                 <v-col
                     class="text-center"
-                    v-for="movie in movieListPerPage">
+                    v-for="movie in showMovies">
                     <MovieCard
                         :name="movie.name"
                         :score="MovieStore.countAverageScore(movie)"
