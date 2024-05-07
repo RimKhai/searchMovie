@@ -36,15 +36,13 @@ export const useMovieStore = defineStore('movieStore', {
 
             return Math.round((sum / count) * 1000) / 1000
         },
-
-        /* totalPages() {
-            return Math.ceil(this.movies.docs.length / 25)
-        }, */
+        findMovieById(id) {
+            return this.movies.docs.find((movie) => movie.externalId._id === id)
+        },
     },
 
     getters: {
         /* getAverageScore: (state) => {}, */
-
         getTotalPages: (state) => Math.ceil(state.movies.docs.length / 25),
     },
 })
