@@ -10,7 +10,7 @@ const movies = ref(movieStore.movies)
 
 const currentPage = ref(1)
 
-const moviesPerPage = 25
+const MOVIES_PER_PAGE = 25
 
 const sortingParametrs = [
     { title: 'По названию', parametr: 'title' },
@@ -57,8 +57,8 @@ const sorting = (sortParam, movies) => {
 const movieListPerPage = ref([])
 
 const showMovies = computed(() => {
-    let start = (currentPage.value - 1) * moviesPerPage
-    let end = start + moviesPerPage
+    let start = (currentPage.value - 1) * MOVIES_PER_PAGE
+    let end = start + MOVIES_PER_PAGE
     let m = movies.value.docs
     m = sorting(movieStore.currentSorting, m)
     /* movieListPerPage = m.slice(start, end) */
@@ -85,9 +85,10 @@ changePage(1)
         >
             <v-col cols="12">
                 <v-autocomplete
+                    search=""
                     label="Поиск"
                     variant="outlined"
-                    auto-select-first
+                    auto-select-first="exact"
                     :items="movieStore.movies.docs"
                     item-title="name"
                     no-data-text="Ничего не найдено("
@@ -97,8 +98,7 @@ changePage(1)
                     single-line
                     menu-icon=""
                     rounded
-                >
-                </v-autocomplete>
+                />
             </v-col>
             <!-- <div class="text-center">
                 <v-btn
@@ -125,12 +125,18 @@ changePage(1)
                         :score="movieStore.countAverageScore(movie)"
                         :year="movie.year"
                         :poster="movie.poster.previewUrl"
+                        @click="
+                            $router.push({
+                                name: 'movieCard',
+                                params: { movieId: movie.externalId._id },
+                            })
+                        "
                     />
                 </v-col>
             </v-row>
             <v-pagination
                 v-model="currentPage"
-                :length="movieStore.getTotalPages()"
+                :length="movieStore.getTotalPages"
                 @update:modelValue="changePage"
             />
         </v-container>

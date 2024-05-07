@@ -25,7 +25,8 @@ const routes = [
         component: MainPage,
     },
     {
-        path: '/movie',
+        path: '/movie/:movieId',
+        name: 'movieCard',
         component: MoviePage,
     },
     {
