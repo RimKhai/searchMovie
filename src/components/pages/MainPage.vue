@@ -1,10 +1,12 @@
 <script setup>
 import { useMovieStore } from '../../stores/MovieStore.js'
 import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import MovieCard from '../ui/MovieCard.vue'
 import AppBar from '../ui/AppBar.vue'
 
 const movieStore = useMovieStore()
+const route = useRoute()
 
 const movies = ref(movieStore.movies)
 
@@ -69,6 +71,12 @@ const changePage = (page) => {
     currentPage.value = page
     window.scrollTo(0, 0)
 }
+const onClickSearch = (id) => {
+    route.push({
+        name: 'movieCard',
+        params: { movieId: id },
+    })
+}
 
 changePage(1)
 </script>
@@ -95,6 +103,12 @@ changePage(1)
                     item-props
                     clearable
                     prepend-inner-icon="mdi-magnify"
+                    @click:prependInner="
+                        $route.push({
+                            name: 'movieCard',
+                            params: { movieId: items.externalId._id },
+                        })
+                    "
                     single-line
                     menu-icon=""
                     rounded
