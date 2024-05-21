@@ -6,23 +6,21 @@ import MovieCard from '../ui/MovieCard.vue'
 import AppBar from '../ui/AppBar.vue'
 
 const movieStore = useMovieStore()
-const route = useRoute()
-
 const movies = ref(movieStore.movies)
-
 const currentPage = ref(1)
-
+const search = ref('')
 const MOVIES_PER_PAGE = 25
-
 const sortingParametrs = [
     { title: 'По названию', parametr: 'title' },
     { title: 'По году выхода', parametr: 'year' },
     { title: 'По средней оценке', parametr: 'score' },
     { title: 'По хронометражу', parametr: 'timing' },
 ]
-
 const currentSorting = ref(movieStore.currentSorting)
-
+const changePage = (page) => {
+    currentPage.value = page
+    window.scrollTo(0, 0)
+}
 const sorting = (sortParam, movies) => {
     switch (sortParam) {
         case 'title': {
@@ -32,20 +30,20 @@ const sorting = (sortParam, movies) => {
         }
         case 'year': {
             return movies.sort((m1, m2) => {
-                if (m1.year > m2.year) return 1
-                else if (m1.year < m2.year) return -1
-                else
-                    return m1.name.toLowerCase() > m2.name.toLowerCase()
-                        ? 1
-                        : -1
+                if (m1.year > m2.year) {
+                    return 1
+                }
+                else if (m1.year < m2.year) {
+                    return -1
+                }
+                else {
+                    return m1.name.toLowerCase() > m2.name.toLowerCase() ? 1: -1
+                }
             })
         }
         case 'score': {
             return movies.sort((m1, m2) =>
-                movieStore.countAverageScore(m1) >
-                movieStore.countAverageScore(m2)
-                    ? 1
-                    : -1
+                movieStore.countAverageScore(m1) > movieStore.countAverageScore(m2) ? 1 : -1
             )
         }
         case 'timing': {
@@ -55,32 +53,29 @@ const sorting = (sortParam, movies) => {
         }
     }
 }
-
-const movieListPerPage = ref([])
-
-const showMovies = computed(() => {
-    let start = (currentPage.value - 1) * MOVIES_PER_PAGE
-    let end = start + MOVIES_PER_PAGE
-    let m = movies.value.docs
-    m = sorting(movieStore.currentSorting, m)
-    /* movieListPerPage = m.slice(start, end) */
-    return m.slice(start, end)
+const searchMovies = computed(() => {
+    if (search.value) {
+        return movies.value.docs.filter((movie) =>
+            movie.name.toLowerCase().includes(search.value.toLowerCase())
+        )
+    } else {
+        return movies.value.docs
+    }
 })
-
-const changePage = (page) => {
-    currentPage.value = page
-    window.scrollTo(0, 0)
-}
-const onClickSearch = (id) => {
-    route.push({
-        name: 'movieCard',
-        params: { movieId: id },
-    })
-}
-
+const showMovies = computed(() => {
+    const start = (currentPage.value - 1) * MOVIES_PER_PAGE
+    const end = start + MOVIES_PER_PAGE
+    if (!search.value) {
+        const m = sorting(movieStore.currentSorting, movies.value.docs)
+        return m.slice(start, end)
+    } else {
+        const m = sorting(movieStore.currentSorting, searchMovies.value)
+        changePage(1)
+        return m.slice(start, end)
+    }
+})
 changePage(1)
 </script>
-
 <template>
     <v-app>
         <AppBar
@@ -88,51 +83,30 @@ changePage(1)
             :currentSorting="currentSorting"
         />
         <v-responsive
-            class="mx-auto mt-8"
-            width="500"
+            class="mx-auto mt-4"
+            width="500px"
+            max-height="70px"
         >
-            <v-col cols="12">
-                <v-autocomplete
-                    search=""
-                    label="Поиск"
-                    variant="outlined"
-                    auto-select-first="exact"
-                    :items="movieStore.movies.docs"
-                    item-title="name"
-                    no-data-text="Ничего не найдено("
-                    item-props
-                    clearable
-                    prepend-inner-icon="mdi-magnify"
-                    @click:prependInner="
-                        $route.push({
-                            name: 'movieCard',
-                            params: { movieId: items.externalId._id },
-                        })
-                    "
-                    single-line
-                    menu-icon=""
-                    rounded
-                />
-            </v-col>
-            <!-- <div class="text-center">
-                <v-btn
-                rounded
-                class="mx-auto mb-3"
+            <v-text-field
+                v-model="search"
+                class="my-2"
+                label="Поиск"
                 variant="outlined"
-                width="400"
-                >
-                    Поиск
-                </v-btn>
-            </div> -->
+                clearable
+                prepend-inner-icon="mdi-magnify"
+                rounded
+            />
         </v-responsive>
         <v-container>
             <v-row
+                v-if="showMovies.length > 0"
                 justify="start"
                 align="center"
             >
                 <v-col
                     class="text-center"
                     v-for="movie in showMovies"
+                    :key="movie.name"
                 >
                     <MovieCard
                         :name="movie.name"
@@ -142,19 +116,30 @@ changePage(1)
                         @click="
                             $router.push({
                                 name: 'movieCard',
-                                params: { movieId: movie.externalId._id },
+                                params: {
+                                    movieId: movie.externalId._id,
+                                },
                             })
                         "
                     />
                 </v-col>
             </v-row>
-            <v-pagination
-                v-model="currentPage"
-                :length="movieStore.getTotalPages"
-                @update:modelValue="changePage"
+            <v-alert
+                v-else
+                class="mx-auto mb-20"
+                position="relative"
+                rounded
+                tonal
+                max-width="450"
+                min-width="250"
+                title="Ничего не найдено"
+                text="К сожалению, фильма с таким названием нет. Попробуйте поискать что-нибудь другое."
             />
         </v-container>
+        <v-pagination
+            v-model="currentPage"
+            :length="searchMovies.length ? Math.ceil(searchMovies.length / MOVIES_PER_PAGE): 1"
+            @update:modelValue="changePage"
+        />
     </v-app>
 </template>
-
-<style></style>
