@@ -51,8 +51,6 @@ const rating = ref()
         width="1000"
     >
         <v-container>
-            <!-- <h1>{{ movie.name }}</h1>
-            <h2 color="gray">{{ movie.alternativeName }}</h2> -->
             <v-row
                 justify="start"
                 class="mb-5"
@@ -62,14 +60,19 @@ const rating = ref()
                     <v-img
                         :src="movie.poster.url"
                         height="auto"
-                        width="300px"
+                        width="325px"
                         cover
                     />
                 </v-col>
-                <v-col class="mx-0">
+                <v-col>
                     <p class="mx-auto">О фильме:</p>
-                    <v-list>
+                    <v-list 
+                        lines="one"
+                        activatable="false"
+                        selectable="false"
+                    >
                         <v-list-item
+                            link="false"
                             hover="false"
                             v-for="(item, i) in aboutMovie"
                             :key="i"
@@ -97,5 +100,3 @@ const rating = ref()
         </v-container>
     </v-card>
 </template>
-
-<style lang="scss" scoped></style>
