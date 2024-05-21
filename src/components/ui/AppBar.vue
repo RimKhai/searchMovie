@@ -7,10 +7,10 @@ const sortHandler = (param) => {
     MovieStore.currentSorting = param
 }
 
-const isActive = (currentItem) => {
+/* const isActive = (currentItem) => {
     if (currentItem === MovieStore.currentSorting) return 'green'
     else return false
-}
+} */
 </script>
 
 <template>
@@ -18,14 +18,9 @@ const isActive = (currentItem) => {
         density="default"
         scroll-behavior="hide"
     >
-        <v-toolbar-title>ПоискКино</v-toolbar-title>
-        <!-- <v-spacer /> -->
-        <!-- <v-select
-        :items="sortingParametrs"
-        v-model="sorting"
-        label="Сортировка"
-        >
-        </v-select> -->
+        <v-toolbar-title @click="$router.push('/')">
+            ПоискКино
+        </v-toolbar-title>
         <v-btn v-if="$route.path === '/'">
             Сортировка
             <v-menu activator="parent">
@@ -44,5 +39,3 @@ const isActive = (currentItem) => {
         </v-btn>
     </v-toolbar>
 </template>
-
-<style lang="scss" scoped></style>
