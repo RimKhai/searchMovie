@@ -7,6 +7,8 @@ const movieStore = useMovieStore()
 const route = useRoute()
 const movieId = computed(() => route.params.movieId)
 const movie = computed(() => movieStore.findMovieById(movieId.value))
+const rating = ref()
+const isMark = ref(false)
 const aboutMovie = [
     {
         title: 'Год производства: ',
@@ -39,7 +41,7 @@ const aboutMovie = [
                 : 'Рейтинг отсутствует',
     },
 ]
-const rating = ref()
+
 </script>
 
 <template>
@@ -50,6 +52,15 @@ const rating = ref()
         :subtitle="movie.alternativeName"
         width="1000"
     >
+        <template v-slot:append>
+            <v-btn
+                width="250px"
+                :text="isMark ? 'Убрать из закладок' : 'Добавить в закладки'"
+                :prepend-icon="isMark ? 'mdi-bookmark-remove-outline' : 'mdi-bookmark-plus-outline'"
+                @click="isMark = !isMark"
+            />
+        </template>
+        <v-divider />
         <v-container>
             <v-row
                 justify="start"
@@ -60,41 +71,43 @@ const rating = ref()
                     <v-img
                         :src="movie.poster.url"
                         height="auto"
-                        width="325px"
+                        width="300px"
                         cover
                     />
                 </v-col>
                 <v-col>
-                    <p class="mx-auto">О фильме:</p>
-                    <v-list 
-                        lines="one"
-                        activatable="false"
-                        selectable="false"
-                    >
+                    <h3 class="ml-4">О фильме:</h3>
+                    <!-- <v-divider /> -->
+                    <v-list lines="one">
                         <v-list-item
-                            link="false"
-                            hover="false"
                             v-for="(item, i) in aboutMovie"
                             :key="i"
                             :title="item.title + item.value"
                             :value="item.value"
                         >
+                            <v-divider />
                         </v-list-item>
                     </v-list>
                     <v-container class="text-center">
-                        <p>Оценка пользователя:</p>
-                        <v-rating
-                            v-model="rating"
-                            hover
-                            half-increments
-                            length="10"
-                            clearable
-                            class="mb-0"
-                        />
-                        <pre v-if="rating > 0">{{ rating }}</pre>
+                        <v-card-action>
+                            <div class="d-flex">
+                                Оценка пользователя:
+                                {{ rating > 0 ? rating : '' }}
+                            </div>
+                            <v-rating
+                                v-model="rating"
+                                hover
+                                half-increments
+                                length="10"
+                                clearable
+                                class="mb-0"
+                            />
+                        </v-card-action>
+                        <!-- <pre v-if="rating > 0">{{ rating }}</pre> -->
                     </v-container>
                 </v-col>
             </v-row>
+            <v-divider />
             <strong>Описание:</strong>
             <p class="mx-auto">{{ movie.description }}</p>
         </v-container>
