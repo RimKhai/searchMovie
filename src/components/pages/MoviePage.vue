@@ -26,47 +26,75 @@ const aboutMovie = [
     },
     {
         title: 'Рейтинг критиков: ',
-        value: movie.value.rating.filmCritics,
+        value:
+            movie.value.rating.filmCritics > 0
+                ? movie.value.rating.filmCritics
+                : 'Рейтинг отсутствует',
     },
     {
         title: 'Рейтинг российских критиков: ',
-        value: movie.value.rating.russianFilmCritics,
+        value:
+            movie.value.rating.russianFilmCritics > 0
+                ? movie.value.rating.russianFilmCritics
+                : 'Рейтинг отсутствует',
     },
 ]
+const rating = ref()
 </script>
 
 <template>
     <AppBar />
     <v-card
-        class="mx-auto"
+        class="my-5 mx-auto"
         :title="movie.name"
         :subtitle="movie.alternativeName"
+        width="1000"
     >
-        <v-img
-            :src="movie.poster.url"
-            height="auto"
-            width="300px"
-            cover
-        />
-        <!-- <h1>
-            {{ movie.name }}
-        </h1>
-        <h2 v-if="movie.alternativeName">
-            Оригинальное название:
-            {{ movie.alternativeName }}
-        </h2> -->
-        <p class="mx-auto">О фильме</p>
-        <v-list>
-            <v-list-item
-                v-for="(item, i) in aboutMovie"
-                :key="i"
-                :title="item.title + item.value"
-                :value="item.value"
+        <v-container>
+            <!-- <h1>{{ movie.name }}</h1>
+            <h2 color="gray">{{ movie.alternativeName }}</h2> -->
+            <v-row
+                justify="start"
+                class="mb-5"
+                no-gutters
             >
-            </v-list-item>
-        </v-list>
-        <p>Описание:</p>
-        <p class="mx-auto">{{ movie.description }}</p>
+                <v-col cols="4">
+                    <v-img
+                        :src="movie.poster.url"
+                        height="auto"
+                        width="300px"
+                        cover
+                    />
+                </v-col>
+                <v-col class="mx-0">
+                    <p class="mx-auto">О фильме:</p>
+                    <v-list>
+                        <v-list-item
+                            hover="false"
+                            v-for="(item, i) in aboutMovie"
+                            :key="i"
+                            :title="item.title + item.value"
+                            :value="item.value"
+                        >
+                        </v-list-item>
+                    </v-list>
+                    <v-container class="text-center">
+                        <p>Оценка пользователя:</p>
+                        <v-rating
+                            v-model="rating"
+                            hover
+                            half-increments
+                            length="10"
+                            clearable
+                            class="mb-0"
+                        />
+                        <pre v-if="rating > 0">{{ rating }}</pre>
+                    </v-container>
+                </v-col>
+            </v-row>
+            <strong>Описание:</strong>
+            <p class="mx-auto">{{ movie.description }}</p>
+        </v-container>
     </v-card>
 </template>
 
