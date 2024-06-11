@@ -7,8 +7,27 @@ const movieStore = useMovieStore()
 const route = useRoute()
 const movieId = computed(() => route.params.movieId)
 const movie = computed(() => movieStore.findMovieById(movieId.value))
-const rating = ref()
-const isMark = ref(false)
+const movieLS = ref({})
+const forCheck = JSON.parse(localStorage.getItem(movie.value.name.toString()))
+if (Object.keys(forCheck) === 0) {
+    localStorage.setItem(
+        movie.value.name.toString(),
+        JSON.stringify({
+            rating: 0,
+            isMark: false,
+        })
+    )
+    movieLS.value = JSON.parse(localStorage.getItem(movie.value.name.toString()))
+}
+else {
+    movieLS.value = JSON.parse(localStorage.getItem(movie.value.name.toString()))
+}
+const toLS = () => {
+    localStorage.setItem(
+        movie.value.name.toString(),
+        JSON.stringify(movieLS.value)
+    )
+}
 const aboutMovie = [
     {
         title: 'Год производства: ',
@@ -41,7 +60,6 @@ const aboutMovie = [
                 : 'Рейтинг отсутствует',
     },
 ]
-
 </script>
 
 <template>
@@ -55,9 +73,18 @@ const aboutMovie = [
         <template v-slot:append>
             <v-btn
                 width="250px"
-                :text="isMark ? 'Убрать из закладок' : 'Добавить в закладки'"
-                :prepend-icon="isMark ? 'mdi-bookmark-remove-outline' : 'mdi-bookmark-plus-outline'"
-                @click="isMark = !isMark"
+                :text="
+                    movieLS.isMark
+                        ? 'Убрать из закладок'
+                        : 'Добавить в закладки'
+                "
+                :prepend-icon="
+                    movieLS.isMark
+                        ? 'mdi-bookmark-remove-outline'
+                        : 'mdi-bookmark-plus-outline'
+                "
+                @click="movieLS.isMark = !movieLS.isMark"
+                v-on="toLS()"
             />
         </template>
         <v-divider />
@@ -92,15 +119,17 @@ const aboutMovie = [
                         <v-card-action>
                             <div class="d-flex">
                                 Оценка пользователя:
-                                {{ rating > 0 ? rating : '' }}
+                                <!-- {{ window.localStorage.getItem('rating') }} -->
+                                {{ movieLS.rating > 0 ? movieLS.rating : '' }}
                             </div>
                             <v-rating
-                                v-model="rating"
+                                v-model="movieLS.rating"
                                 hover
                                 half-increments
                                 length="10"
                                 clearable
                                 class="mb-0"
+                                v-on="toLS()"
                             />
                         </v-card-action>
                         <!-- <pre v-if="rating > 0">{{ rating }}</pre> -->
