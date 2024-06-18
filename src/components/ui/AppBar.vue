@@ -21,21 +21,37 @@ const sortHandler = (param) => {
         <v-toolbar-title @click="$router.push('/')">
             ПоискКино
         </v-toolbar-title>
-        <v-btn v-if="$route.path === '/'">
-            Сортировка
-            <v-menu activator="parent">
-                <v-list>
-                    <v-list-item
-                        color="green"
-                        v-for="(item, index) in sortingParametrs"
-                        :key="index"
-                        :value="item.parametr"
-                        @click="sortHandler(item.parametr)"
-                    >
-                        <v-list-item-title>{{ item.title }}</v-list-item-title>
-                    </v-list-item>
-                </v-list>
-            </v-menu>
-        </v-btn>
+        <v-toolbar-items>
+            <v-btn
+                @click="$router.push('/markers')"
+            > 
+                Закладки
+            </v-btn>
+            <v-divider
+                class="align-self-center"
+                length="50"
+                vertical
+            />
+            <v-btn
+                :disabled="$route.name === 'movieCard' ? true : false"
+            >
+                Сортировка
+                <v-menu activator="parent">
+                    <v-list>
+                        <v-list-item
+                            color="green"
+                            v-for="(item, index) in sortingParametrs"
+                            :key="index"
+                            :value="item.parametr"
+                            @click="sortHandler(item.parametr)"
+                        >
+                            <v-list-item-title>{{
+                                item.title
+                            }}</v-list-item-title>
+                        </v-list-item>
+                    </v-list>
+                </v-menu>
+            </v-btn>
+        </v-toolbar-items>
     </v-toolbar>
 </template>
