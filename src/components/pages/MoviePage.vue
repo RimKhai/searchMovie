@@ -9,7 +9,7 @@ const movieId = computed(() => route.params.movieId)
 const movie = computed(() => movieStore.findMovieById(movieId.value))
 const movieLS = ref({})
 const forCheck = JSON.parse(localStorage.getItem(movie.value.name.toString()))
-if (Object.keys(forCheck) === 0) {
+if (!forCheck || Object.keys(forCheck) === 0) {
     localStorage.setItem(
         movie.value.name.toString(),
         JSON.stringify({
@@ -104,7 +104,6 @@ const aboutMovie = [
                 </v-col>
                 <v-col>
                     <h3 class="ml-4">О фильме:</h3>
-                    <!-- <v-divider /> -->
                     <v-list lines="one">
                         <v-list-item
                             v-for="(item, i) in aboutMovie"
@@ -119,7 +118,6 @@ const aboutMovie = [
                         <v-card-action>
                             <div class="d-flex">
                                 Оценка пользователя:
-                                <!-- {{ window.localStorage.getItem('rating') }} -->
                                 {{ movieLS.rating > 0 ? movieLS.rating : '' }}
                             </div>
                             <v-rating
@@ -132,7 +130,6 @@ const aboutMovie = [
                                 v-on="toLS()"
                             />
                         </v-card-action>
-                        <!-- <pre v-if="rating > 0">{{ rating }}</pre> -->
                     </v-container>
                 </v-col>
             </v-row>
