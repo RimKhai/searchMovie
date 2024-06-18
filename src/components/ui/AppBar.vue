@@ -1,16 +1,16 @@
 <script setup>
 import { useMovieStore } from '../../stores/MovieStore.js'
-const props = defineProps(['sortingParametrs'], 'currentSorting')
+import { ref, computed } from 'vue'
+const props = defineProps(['sortingParametrs',])
 const MovieStore = useMovieStore()
-
 const sortHandler = (param) => {
-    MovieStore.currentSorting = param
+    if ((param === MovieStore.currentSorting)) {
+        MovieStore.currentSorting = '-' + param
+    }
+    else {
+        MovieStore.currentSorting = param
+    } 
 }
-
-/* const isActive = (currentItem) => {
-    if (currentItem === MovieStore.currentSorting) return 'green'
-    else return false
-} */
 </script>
 
 <template>
@@ -22,32 +22,26 @@ const sortHandler = (param) => {
             ПоискКино
         </v-toolbar-title>
         <v-toolbar-items>
-            <v-btn
-                @click="$router.push('/markers')"
-            > 
-                Закладки
-            </v-btn>
+            <v-btn @click="$router.push('/markers')"> Закладки </v-btn>
             <v-divider
                 class="align-self-center"
                 length="50"
                 vertical
             />
-            <v-btn
-                :disabled="$route.name === 'movieCard' ? true : false"
-            >
+            <v-btn :disabled="$route.name === 'movieCard' ? true : false">
                 Сортировка
                 <v-menu activator="parent">
                     <v-list>
                         <v-list-item
-                            color="green"
                             v-for="(item, index) in sortingParametrs"
                             :key="index"
                             :value="item.parametr"
                             @click="sortHandler(item.parametr)"
                         >
-                            <v-list-item-title>{{
-                                item.title
-                            }}</v-list-item-title>
+                            <v-list-item-title>
+                                <v-icon class="mx-auto"> mdi-sort </v-icon>
+                                {{ item.title }}
+                            </v-list-item-title>
                         </v-list-item>
                     </v-list>
                 </v-menu>

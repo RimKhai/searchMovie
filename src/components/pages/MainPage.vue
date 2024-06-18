@@ -42,14 +42,75 @@ const sorting = (sortParam, movies) => {
             })
         }
         case 'score': {
-            return movies.sort((m1, m2) =>
-                movieStore.countAverageScore(m1) > movieStore.countAverageScore(m2) ? 1 : -1
-            )
+            return movies.sort((m1, m2) => {
+                if (movieStore.countAverageScore(m1) > movieStore.countAverageScore(m2)) {
+                    return 1
+                }
+                else if (movieStore.countAverageScore(m1) < movieStore.countAverageScore(m2)) {
+                    return -1
+                }
+                else {
+                    return m1.name.toLowerCase() > m2.name.toLowerCase() ? 1: -1//0
+                }
+        })
         }
         case 'timing': {
-            return movies.sort((m1, m2) =>
-                m1.movieLength > m2.movieLength ? 1 : -1
+            return movies.sort((m1, m2) => {
+                if (m1.movieLength > m2.movieLength) {
+                    return 1
+                }
+                else if (m1.movieLength < m2.movieLength) {
+                    return -1
+                }
+                else {
+                    return m1.name.toLowerCase() > m2.name.toLowerCase() ? 1: -1
+                }
+            })
+        }
+        case '-title': {
+            return movies.sort((m2, m1) =>
+                m1.name.toLowerCase() > m2.name.toLowerCase() ? 1 : -1
             )
+        }
+        case '-year': {
+            return movies.sort((m2, m1) => {
+                if (m1.year > m2.year) {
+                    return 1
+                }
+                else if (m1.year < m2.year) {
+                    return -1
+                }
+                else {
+                    return m1.name.toLowerCase() > m2.name.toLowerCase() ? 1: -1
+                }
+            })
+        }
+        case '-score': {
+            return movies.sort((m2, m1) =>{
+                if (movieStore.countAverageScore(m1) > movieStore.countAverageScore(m2)) {
+                    return 1
+                }
+                else if (movieStore.countAverageScore(m1) < movieStore.countAverageScore(m2)) {
+                    return -1
+                }
+                else {
+                    return m1.name.toLowerCase() > m2.name.toLowerCase() ? 1: -1//0
+                }
+        })
+        }
+        case '-timing': {
+            return movies.sort((m2, m1) =>
+            {
+                if (m1.movieLength > m2.movieLength) {
+                    return 1
+                }
+                else if (m1.movieLength < m2.movieLength) {
+                    return -1
+                }
+                else {
+                    return m1.name.toLowerCase() > m2.name.toLowerCase() ? 1: -1
+                }
+            })
         }
     }
 }
@@ -79,8 +140,7 @@ changePage(1)
 <template>
     <v-app>
         <AppBar
-            :sortingParametrs="sortingParametrs"
-            :currentSorting="currentSorting"
+            :sortingParametrs="sortingParametrs"  
         />
         <v-responsive
             class="mx-auto mt-4"
