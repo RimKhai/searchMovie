@@ -10,6 +10,110 @@ export const useMovieStore = defineStore('movieStore', {
     }),
 
     actions: {
+        sorting (movies) {
+            switch (this.currentSorting) {
+                case 'title': {
+                    return movies.sort((m1, m2) =>
+                        m1.name.toLowerCase() > m2.name.toLowerCase() ? 1 : -1
+                    )
+                }
+                case 'year': {
+                    return movies.sort((m1, m2) => {
+                        if (m1.year > m2.year) {
+                            return 1
+                        } else if (m1.year < m2.year) {
+                            return -1
+                        } else {
+                            return m1.name.toLowerCase() > m2.name.toLowerCase()
+                                ? 1
+                                : -1
+                        }
+                    })
+                }
+                case 'score': {
+                    return movies.sort((m1, m2) => {
+                        if (
+                            this.countAverageScore(m1) >
+                            this.countAverageScore(m2)
+                        ) {
+                            return 1
+                        } else if (
+                            this.countAverageScore(m1) <
+                            this.countAverageScore(m2)
+                        ) {
+                            return -1
+                        } else {
+                            return m1.name.toLowerCase() > m2.name.toLowerCase()
+                                ? 1
+                                : -1 //0
+                        }
+                    })
+                }
+                case 'timing': {
+                    return movies.sort((m1, m2) => {
+                        if (m1.movieLength > m2.movieLength) {
+                            return 1
+                        } else if (m1.movieLength < m2.movieLength) {
+                            return -1
+                        } else {
+                            return m1.name.toLowerCase() > m2.name.toLowerCase()
+                                ? 1
+                                : -1
+                        }
+                    })
+                }
+                case '-title': {
+                    return movies.sort((m2, m1) =>
+                        m1.name.toLowerCase() > m2.name.toLowerCase() ? 1 : -1
+                    )
+                }
+                case '-year': {
+                    return movies.sort((m2, m1) => {
+                        if (m1.year > m2.year) {
+                            return 1
+                        } else if (m1.year < m2.year) {
+                            return -1
+                        } else {
+                            return m1.name.toLowerCase() > m2.name.toLowerCase()
+                                ? 1
+                                : -1
+                        }
+                    })
+                }
+                case '-score': {
+                    return movies.sort((m2, m1) => {
+                        if (
+                            this.countAverageScore(m1) >
+                            this.countAverageScore(m2)
+                        ) {
+                            return 1
+                        } else if (
+                            this.countAverageScore(m1) <
+                            this.countAverageScore(m2)
+                        ) {
+                            return -1
+                        } else {
+                            return m1.name.toLowerCase() > m2.name.toLowerCase()
+                                ? 1
+                                : -1 //0
+                        }
+                    })
+                }
+                case '-timing': {
+                    return movies.sort((m2, m1) => {
+                        if (m1.movieLength > m2.movieLength) {
+                            return 1
+                        } else if (m1.movieLength < m2.movieLength) {
+                            return -1
+                        } else {
+                            return m1.name.toLowerCase() > m2.name.toLowerCase()
+                                ? 1
+                                : -1
+                        }
+                    })
+                }
+            }
+        },
         countAverageScore(movie) {
             let sum = 0
             let count = 0
@@ -47,7 +151,7 @@ export const useMovieStore = defineStore('movieStore', {
             }))
         },
         changeDataAtLocalStorage(name, rating, mark){
-            console.log(name, rating, mark)
+            //console.log(name, rating, mark)
             localStorage.setItem(name, JSON.stringify({
                 rating: rating,
                 isMark: mark,
@@ -57,5 +161,16 @@ export const useMovieStore = defineStore('movieStore', {
 
     getters: {
         getTotalPages: (state) => Math.ceil(state.movies.docs.length / 25),
+        getMarkedMovies: (state) => state.movies.docs.filter((movie) => {
+            let movieLS = JSON.parse(localStorage.getItem(movie.name))
+            if (movieLS && movieLS.isMark) {
+                /* console.log(movie.name)
+                console.log(movieLS.value) */
+                return true
+            } 
+            else {
+                return false
+            }
+        }),
     },
 })
