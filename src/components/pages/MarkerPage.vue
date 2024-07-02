@@ -43,7 +43,7 @@ const markedMovies = computed(() => movieStore.getMarkedMovies)
         <v-row justify="start">
             <v-col
                 class="text-center"
-                v-for="movie in markedMovies"
+                v-for="movie in movieStore.sorting(markedMovies)"
                 :key="movie.name"
             >
                 <MovieCard
