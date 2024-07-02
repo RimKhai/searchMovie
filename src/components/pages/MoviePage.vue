@@ -9,24 +9,17 @@ const movieId = computed(() => route.params.movieId)
 const movie = computed(() => movieStore.findMovieById(movieId.value))
 const movieLS = ref({})
 const forCheck = JSON.parse(localStorage.getItem(movie.value.name.toString()))
+window.scrollTo(0, 0)
 if (!forCheck || Object.keys(forCheck) === 0) {
-    localStorage.setItem(
-        movie.value.name.toString(),
-        JSON.stringify({
-            rating: 0,
-            isMark: false,
-        })
-    )
+    movieStore.addMovieToLocalStorage(movie.value)
     movieLS.value = JSON.parse(localStorage.getItem(movie.value.name.toString()))
 }
 else {
     movieLS.value = JSON.parse(localStorage.getItem(movie.value.name.toString()))
 }
-const toLS = () => {
-    localStorage.setItem(
-        movie.value.name.toString(),
-        JSON.stringify(movieLS.value)
-    )
+function changeMark() {
+    movieLS.value.isMark = !movieLS.value.isMark
+    movieStore.changeDataAtLocalStorage(movie.value.name, movieLS.value.rating,  movieLS.value.isMark)
 }
 const aboutMovie = [
     {
@@ -83,8 +76,7 @@ const aboutMovie = [
                         ? 'mdi-bookmark-remove-outline'
                         : 'mdi-bookmark-plus-outline'
                 "
-                @click="movieLS.isMark = !movieLS.isMark"
-                v-on="toLS()"
+                @click="changeMark()"
             />
         </template>
         <v-divider />
@@ -127,7 +119,7 @@ const aboutMovie = [
                                 length="10"
                                 clearable
                                 class="mb-0"
-                                v-on="toLS()"
+                                @click="movieStore.changeDataAtLocalStorage(movie.name, movieLS.rating, movieLS.isMark)"
                             />
                         </v-card-action>
                     </v-container>
@@ -137,5 +129,11 @@ const aboutMovie = [
             <strong>Описание:</strong>
             <p class="mx-auto">{{ movie.description }}</p>
         </v-container>
+    </v-card>
+    <v-card
+        title="Вам также может понравится:"
+        class="my-5 mx-auto"
+        width="1000"
+    >
     </v-card>
 </template>
