@@ -119,7 +119,7 @@ const aboutMovie = [
                                 length="10"
                                 clearable
                                 class="mb-0"
-                                @click="movieStore.changeDataAtLocalStorage(movie.name, movieLS.rating, movieLS.isMark)"
+                                @update:modelValue="movieStore.changeDataAtLocalStorage(movie.name, movieLS.rating, movieLS.isMark)"
                             />
                         </v-card-action>
                     </v-container>
