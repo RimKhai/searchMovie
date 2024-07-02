@@ -8,7 +8,7 @@ window.scrollTo(0, 0)
 const movieStore = useMovieStore()
 const movieLS = ref({})
 const movies = movieStore.movies.docs
-const markedMovies = computed(() =>
+/* const markedMovies = computed(() =>
     movies.filter((movie) => {
         movieLS.value = JSON.parse(localStorage.getItem(movie.name))
         if (movieLS.value && movieLS.value.isMark) {
@@ -19,13 +19,16 @@ const markedMovies = computed(() =>
             return false
         }
     })
-)
-function unmark (name) {
-    const movieLS = JSON.parse(localStorage.getItem(name))
-    movieLS.isMark = false
-    localStorage.setItem(name, JSON.stringify(movieLS))
-    //markedMovies
+) */
+function unmark(name) {
+    //const movieLS = JSON.parse(localStorage.getItem(name))
+    movieStore.changeDataAtLocalStorage(
+        name,
+        JSON.parse(localStorage.getItem(name)).rating,
+        false,
+    )
 }
+const markedMovies = computed(() => movieStore.getMarkedMovies)
 /* const unmark = computed(() => {
     const movieLS = JSON.parse(localStorage.getItem(movie.name.toString()))
     movieLS.isMark = false
