@@ -39,10 +39,23 @@ export const useMovieStore = defineStore('movieStore', {
         findMovieById(id) {
             return this.movies.docs.find((movie) => movie.externalId._id === id)
         },
+        addMovieToLocalStorage(movie) {
+            console.log(movie)
+            localStorage.setItem(movie.name.toString(), JSON.stringify({
+                rating: 0,
+                isMark: false,
+            }))
+        },
+        changeDataAtLocalStorage(name, rating, mark){
+            console.log(name, rating, mark)
+            localStorage.setItem(name, JSON.stringify({
+                rating: rating,
+                isMark: mark,
+            }))
+        },
     },
 
     getters: {
-        /* getAverageScore: (state) => {}, */
         getTotalPages: (state) => Math.ceil(state.movies.docs.length / 25),
     },
 })
