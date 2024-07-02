@@ -1,7 +1,6 @@
 <script setup>
 import { useMovieStore } from '../../stores/MovieStore.js'
 import { ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
 import MovieCard from '../ui/MovieCard.vue'
 import AppBar from '../ui/AppBar.vue'
 
@@ -16,7 +15,6 @@ const sortingParametrs = [
     { title: 'По средней оценке', parametr: 'score' },
     { title: 'По хронометражу', parametr: 'timing' },
 ]
-const currentSorting = ref(movieStore.currentSorting)
 const changePage = (page) => {
     currentPage.value = page
     window.scrollTo(0, 0)
@@ -32,38 +30,44 @@ const sorting = (sortParam, movies) => {
             return movies.sort((m1, m2) => {
                 if (m1.year > m2.year) {
                     return 1
-                }
-                else if (m1.year < m2.year) {
+                } else if (m1.year < m2.year) {
                     return -1
-                }
-                else {
-                    return m1.name.toLowerCase() > m2.name.toLowerCase() ? 1: -1
+                } else {
+                    return m1.name.toLowerCase() > m2.name.toLowerCase()
+                        ? 1
+                        : -1
                 }
             })
         }
         case 'score': {
             return movies.sort((m1, m2) => {
-                if (movieStore.countAverageScore(m1) > movieStore.countAverageScore(m2)) {
+                if (
+                    movieStore.countAverageScore(m1) >
+                    movieStore.countAverageScore(m2)
+                ) {
                     return 1
-                }
-                else if (movieStore.countAverageScore(m1) < movieStore.countAverageScore(m2)) {
+                } else if (
+                    movieStore.countAverageScore(m1) <
+                    movieStore.countAverageScore(m2)
+                ) {
                     return -1
+                } else {
+                    return m1.name.toLowerCase() > m2.name.toLowerCase()
+                        ? 1
+                        : -1 //0
                 }
-                else {
-                    return m1.name.toLowerCase() > m2.name.toLowerCase() ? 1: -1//0
-                }
-        })
+            })
         }
         case 'timing': {
             return movies.sort((m1, m2) => {
                 if (m1.movieLength > m2.movieLength) {
                     return 1
-                }
-                else if (m1.movieLength < m2.movieLength) {
+                } else if (m1.movieLength < m2.movieLength) {
                     return -1
-                }
-                else {
-                    return m1.name.toLowerCase() > m2.name.toLowerCase() ? 1: -1
+                } else {
+                    return m1.name.toLowerCase() > m2.name.toLowerCase()
+                        ? 1
+                        : -1
                 }
             })
         }
@@ -76,39 +80,44 @@ const sorting = (sortParam, movies) => {
             return movies.sort((m2, m1) => {
                 if (m1.year > m2.year) {
                     return 1
-                }
-                else if (m1.year < m2.year) {
+                } else if (m1.year < m2.year) {
                     return -1
-                }
-                else {
-                    return m1.name.toLowerCase() > m2.name.toLowerCase() ? 1: -1
+                } else {
+                    return m1.name.toLowerCase() > m2.name.toLowerCase()
+                        ? 1
+                        : -1
                 }
             })
         }
         case '-score': {
-            return movies.sort((m2, m1) =>{
-                if (movieStore.countAverageScore(m1) > movieStore.countAverageScore(m2)) {
+            return movies.sort((m2, m1) => {
+                if (
+                    movieStore.countAverageScore(m1) >
+                    movieStore.countAverageScore(m2)
+                ) {
                     return 1
-                }
-                else if (movieStore.countAverageScore(m1) < movieStore.countAverageScore(m2)) {
+                } else if (
+                    movieStore.countAverageScore(m1) <
+                    movieStore.countAverageScore(m2)
+                ) {
                     return -1
+                } else {
+                    return m1.name.toLowerCase() > m2.name.toLowerCase()
+                        ? 1
+                        : -1 //0
                 }
-                else {
-                    return m1.name.toLowerCase() > m2.name.toLowerCase() ? 1: -1//0
-                }
-        })
+            })
         }
         case '-timing': {
-            return movies.sort((m2, m1) =>
-            {
+            return movies.sort((m2, m1) => {
                 if (m1.movieLength > m2.movieLength) {
                     return 1
-                }
-                else if (m1.movieLength < m2.movieLength) {
+                } else if (m1.movieLength < m2.movieLength) {
                     return -1
-                }
-                else {
-                    return m1.name.toLowerCase() > m2.name.toLowerCase() ? 1: -1
+                } else {
+                    return m1.name.toLowerCase() > m2.name.toLowerCase()
+                        ? 1
+                        : -1
                 }
             })
         }
@@ -139,9 +148,7 @@ changePage(1)
 </script>
 <template>
     <v-app>
-        <AppBar
-            :sortingParametrs="sortingParametrs"  
-        />
+        <AppBar :sortingParametrs="sortingParametrs" />
         <v-responsive
             class="mx-auto mt-4"
             width="500px"
@@ -167,20 +174,16 @@ changePage(1)
                     class="text-center"
                     v-for="movie in showMovies"
                     :key="movie.name"
+                    cols="2.5"
                 >
+
                     <MovieCard
                         :name="movie.name"
                         :score="movieStore.countAverageScore(movie)"
                         :year="movie.year"
                         :poster="movie.poster.previewUrl"
-                        @click="
-                            $router.push({
-                                name: 'movieCard',
-                                params: {
-                                    movieId: movie.externalId._id,
-                                },
-                            })
-                        "
+                        :id="movie.externalId._id"
+                        
                     />
                 </v-col>
             </v-row>
@@ -198,7 +201,11 @@ changePage(1)
         </v-container>
         <v-pagination
             v-model="currentPage"
-            :length="searchMovies.length ? Math.ceil(searchMovies.length / MOVIES_PER_PAGE): 1"
+            :length="
+                searchMovies.length
+                    ? Math.ceil(searchMovies.length / MOVIES_PER_PAGE)
+                    : 1
+            "
             @update:modelValue="changePage"
         />
     </v-app>
