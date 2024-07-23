@@ -15,15 +15,18 @@ const movie = defineProps(['name', 'score', 'year', 'poster', 'id'])
         :height="$route.path === '/markers' ? '475px' : '450px'"
         max-width="200px"
         hover
-        ><!-- :height="$route.path === '/markers' ? '500px' : '400px'" -->
+    >
         <v-btn
             v-if="$route.path === '/markers'"
-            class="mx-auto"
-            variant="text"
+            class=" text-subtitle-1 mx-auto mb-2"
+            variant="elevated"
+            size="regular"
+            text="Убрать из закладок"
             density="compact"
-            icon="mdi-bookmark-remove-outline"
+            append-icon="mdi-bookmark-remove-outline"
             @click="$emit('unmarkMovie', movie.name)"
-        /><!-- @click="unmarkMovie()" -->
+            outlined
+        />
         <v-img
             height="300px"
             :src="poster"
