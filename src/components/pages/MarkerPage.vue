@@ -28,27 +28,34 @@ const movies = movieStore.movies.docs */
 ) */
 function unmark(name) {
     //const movieLS = JSON.parse(localStorage.getItem(name))
+    console.log(name)
     movieStore.changeDataAtLocalStorage(
         name,
         JSON.parse(localStorage.getItem(name)).rating,
         false
     )
-    //console.log(movieStore.getMarkedMovies) 
 }
-const markedMovies = computed(() => movieStore.getMarkedMovies)
+//const markedMovies = computed(() => movieStore.getMarkedMovies)
+const showMovies = computed(() => {
+    const start = (currentPage.value - 1) * MOVIES_PER_PAGE
+    const end = start + MOVIES_PER_PAGE
+        const m = movieStore.sorting(movieStore.getMarkedMovies)
+        //changePage(1)
+        return m.slice(start, end)
+})
 /* const unmark = computed(() => {
     const movieLS = JSON.parse(localStorage.getItem(movie.name.toString()))
     movieLS.isMark = false
     localStorage.setItem(movie.name.toString(), JSON.stringify(movieLS))
     markedMovies
 }) */
-/* const watchChangingLS =  */ watch(
+/* const watchChangingLS =  */ /* watch(
     () => [movieStore.getMarkedMovies],
     (movies, prevMovies) => {
         console.log(movies, prevMovies)
     },
     { deep: true }
-)
+) */
 </script>
 
 <template>
@@ -57,7 +64,7 @@ const markedMovies = computed(() => movieStore.getMarkedMovies)
         <v-row justify="start">
             <v-col
                 class="text-center"
-                v-for="movie in movieStore.sorting(markedMovies)"
+                v-for="movie in showMovies"
                 :key="movie.name"
             >
                 <MovieCard
@@ -74,8 +81,8 @@ const markedMovies = computed(() => movieStore.getMarkedMovies)
     <v-pagination
         v-model="currentPage"
         :length="
-            markedMovies.length
-                ? Math.ceil(markedMovies.length / MOVIES_PER_PAGE)
+            movieStore.getMarkedMovies.length
+                ? Math.ceil(movieStore.getMarkedMovies.length / MOVIES_PER_PAGE)
                 : 1
         "
         @update:modelValue="changePage"

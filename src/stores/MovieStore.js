@@ -9,6 +9,25 @@ export const useMovieStore = defineStore('movieStore', {
         currentSorting: 'title',
     }),
 
+    getters: {
+        getTotalPages: (state) => Math.ceil(state.movies.docs.length / 25),
+        getMovieById: (state) => (id) => state.movies.docs.find((movie) => movie.externalId._id === id),
+        getMovieFromLS: () => (name) => JSON.parse(localStorage.getItem(name)),
+        getMarkedMovies: (state) => state.movies.docs.filter((movie) => {
+            let movieLS = state.getMovieFromLS(movie.name)
+            if (movieLS && movieLS.isMark) {
+                    /* console.log(movieLS.isMark)
+                    console.log(movie.name) */
+                /* console.log(movie.name)
+                console.log(movieLS.value) */
+                return true
+            } 
+            else {
+                return false
+            }
+        }),
+    },
+    
     actions: {
         sorting (movies) {
             switch (this.currentSorting) {
@@ -140,9 +159,9 @@ export const useMovieStore = defineStore('movieStore', {
 
             return Math.round((sum / count) * 1000) / 1000
         },
-        findMovieById(id) {
+        /* findMovieById(id) {
             return this.movies.docs.find((movie) => movie.externalId._id === id)
-        },
+        }, */
         addMovieToLocalStorage(movie) {
             console.log(movie)
             localStorage.setItem(movie.name.toString(), JSON.stringify({
@@ -152,25 +171,12 @@ export const useMovieStore = defineStore('movieStore', {
         },
         changeDataAtLocalStorage(name, rating, mark){
             //console.log(name, rating, mark)
+            //console.log(this.getMarkedMovies)
             localStorage.setItem(name, JSON.stringify({
                 rating: rating,
                 isMark: mark,
             }))
+            //console.log(this.getMarkedMovies)
         },
-    },
-
-    getters: {
-        getTotalPages: (state) => Math.ceil(state.movies.docs.length / 25),
-        getMarkedMovies: (state) => state.movies.docs.filter((movie) => {
-            let movieLS = JSON.parse(localStorage.getItem(movie.name))
-            if (movieLS && movieLS.isMark) {
-                /* console.log(movie.name)
-                console.log(movieLS.value) */
-                return true
-            } 
-            else {
-                return false
-            }
-        }),
     },
 })

@@ -6,7 +6,7 @@ import AppBar from '../ui/AppBar.vue'
 const movieStore = useMovieStore()
 const route = useRoute()
 const movieId = computed(() => route.params.movieId)
-const movie = computed(() => movieStore.findMovieById(movieId.value))
+const movie = computed(() => movieStore.getMovieById(movieId.value))
 const movieLS = ref({})
 const forCheck = JSON.parse(localStorage.getItem(movie.value.name.toString()))
 window.scrollTo(0, 0)
